@@ -5,6 +5,7 @@ This module extends usability of the modern [Google Cloud SDK](https://github.co
 Start development for applications that:  
 - Fetch [Unread] Gmail messages.
 - Fetch [Today's] Calendar events.
+- Fetch [Today's] Tasks.
 
 ## Setup
 - This setup assumes you have permissions to access the Google Cloud API in your workspace.
@@ -15,6 +16,7 @@ Start development for applications that:
 - Enable any of the following APIs for your project:
     - Gmail API
     - Calendar API
+    - Tasks API
 - Create a new set of credentials for your project.
     - Navigate to the [API Credentials](https://console.cloud.google.com/apis/credentials) page.
     - Create a new set of OAuth credentials for your project.

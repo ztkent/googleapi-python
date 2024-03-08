@@ -24,8 +24,10 @@ def NewGoogleAPI(scopes, credentials_path='credentials.json'):
        selected_scopes.append('https://www.googleapis.com/auth/gmail.readonly')
     if "calendar" in scopes:
         selected_scopes.append('https://www.googleapis.com/auth/calendar.readonly')
+    if "tasks" in scopes:
+        selected_scopes.append('https://www.googleapis.com/auth/tasks.readonly')
     if len(selected_scopes) == 0:
-        raise GoogleAPIException("Invalid authentication scopes. Must be 'mail' or 'calendar'.")
+        raise GoogleAPIException("Invalid authentication scopes. Must be 'mail', 'calendar', or 'tasks'.")
 
     try:
         creds_client = google_auth_oauthlib.flow.InstalledAppFlow.from_client_secrets_file(
@@ -43,6 +45,7 @@ class GoogleAPI:
         self.creds_client = creds_client
         self.gmail_client = build('gmail', 'v1', credentials=self.creds_client)
         self.calendar_client = build('calendar', 'v3', credentials=self.creds_client)
+        self.tasks_client = build('tasks', 'v1', credentials=self.creds_client)
 
     def get_gmail_messages(self, label='INBOX'):
         try:
@@ -80,6 +83,28 @@ class GoogleAPI:
                 orderBy='startTime').execute()
             events = results.get('items', [])
             return events
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            return []
+
+    def get_tasks(self):
+        try:
+            tasklist = self.tasks_client.tasklists().list().execute().get('items', [])[0]  # get the first task list
+            results = self.tasks_client.tasks().list(tasklist=tasklist['id']).execute()
+            tasks = results.get('items', [])
+            return tasks
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            return []
+
+    def get_todays_tasks(self):
+        try:
+            tasklist = self.tasks_client.tasklists().list().execute().get('items', [])[0]  # get the first task list
+            now = datetime.utcnow().isoformat() + 'Z'  # 'Z' indicates UTC time
+            end = (datetime.utcnow() + timedelta(days=1)).isoformat() + 'Z'
+            results = self.tasks_client.tasks().list(tasklist=tasklist['id'], dueMin=now, dueMax=end).execute()
+            tasks = results.get('items', [])
+            return tasks
         except Exception as e:
             print(f"An error occurred: {e}")
             return []
