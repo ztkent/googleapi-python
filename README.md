@@ -26,7 +26,7 @@ Start development for applications that:
 
 ### Install GoogleAPI-Python
 ```bash
-pip install git+https://github.com/Ztkent/googleapi-python.git
+pip install git+https://github.com/ztkent/googleapi-python.git
 ```
 
 ### Authorize the application
